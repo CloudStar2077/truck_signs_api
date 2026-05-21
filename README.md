@@ -2,22 +2,43 @@
 
 ![Truck Signs](./screenshots/Truck_Signs_logo.png)
 
-# Signs for Trucks
-
-![Python version](https://img.shields.io/badge/Pythn-3.8.10-4c566a?logo=python&&longCache=true&logoColor=white&colorB=pink&style=flat-square&colorA=4c566a) ![Django version](https://img.shields.io/badge/Django-2.2.8-4c566a?logo=django&&longCache=truelogoColor=white&colorB=pink&style=flat-square&colorA=4c566a) ![Django-RestFramework](https://img.shields.io/badge/Django_Rest_Framework-3.12.4-red.svg?longCache=true&style=flat-square&logo=django&logoColor=white&colorA=4c566a&colorB=pink)
-
-
 </div>
 
+# Truck Signs API 
+
+This guide explains how to set up and run a Django REST API and a PostgreSQL Database with Docker
+
 ## Table of Contents
-* [Description](#description)
-* [Installation](#installation)
-* [Screenshots of the Django Backend Admin Panel](#screenshots)
-* [Useful Links](#useful_links)
+* [Prerequisites](#Prerequisites)
+* [Quickstart](#Quickstart)
+* [Usage](#Usage)
+
+## Prerequisites
+- Docker (version 20.10 or higher) installed
+- Git installed
+
+## Quickstart
+how-to-build-the-image 
 
 
 
-## Description
+## Usage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 __Signs for Trucks__ is an online store to buy pre-designed vinyls with custom lines of letters (often call truck letterings). The store also allows clients to upload their own designs and to customize them on the website as well. Aside from the vinyls that are the main product of the store, clients can also purchase simple lettering vinyls with no truck logo, a fire extinguisher vinyl, and/or a vinyl with only the truck unit number (or another number selected by the client).
 
