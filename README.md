@@ -2,13 +2,21 @@
 
 ![Truck Signs](./screenshots/Truck_Signs_logo.png)
 
+# Signs for Trucks
+
+![Python version](https://img.shields.io/badge/Pythn-3.8.10-4c566a?logo=python&&longCache=true&logoColor=white&colorB=pink&style=flat-square&colorA=4c566a) ![Django version](https://img.shields.io/badge/Django-2.2.8-4c566a?logo=django&&longCache=truelogoColor=white&colorB=pink&style=flat-square&colorA=4c566a) ![Django-RestFramework](https://img.shields.io/badge/Django_Rest_Framework-3.12.4-red.svg?longCache=true&style=flat-square&logo=django&logoColor=white&colorA=4c566a&colorB=pink)
+
+
 </div>
+
 
 # Truck Signs API 
 
-This guide explains how to set up and run a Django REST API and a PostgreSQL Database with Docker
+This project provides a Dockerized Django REST API for managing truck sign products, categories, and orders with PostgreSQL as the database backend.
+Gunicorn and Nginx are used to run the application in production. Nginx handles reverse proxying and static content delivery, while Gunicorn serves the Python web application as a WSGI application server.
+The setup is managed entirely through manual Docker commands without Docker Compose.
 
-## Table of Contents
+# Table of Contents
 * [Prerequisites](#Prerequisites)
 * [Quickstart](#Quickstart)
 * [Usage](#Usage)
@@ -18,8 +26,67 @@ This guide explains how to set up and run a Django REST API and a PostgreSQL Dat
 - Git installed
 
 ## Quickstart
-how-to-build-the-image 
 
+- Clone Repository 
+```bash
+git clone git@github.com:CloudStar2077/truck_signs_api.git &&
+cd truck_signs_api
+```
+
+- How-to-build-the-Image 
+
+Copy the example environment file and fill in your values:
+```bash
+cp example.env .env   
+```
+Build the Docker image:
+```bash
+docker build -t truck-signs-api .
+```
+
+- Run the Containers
+
+Create the shared network and the database volume:
+```bash
+docker network create django_net
+docker volume create postgres_data
+```
+
+Start the PostgreSQL container:
+
+```bash
+docker run -d \
+  --name db \
+  --network django_net \
+  --restart on-failure \
+  --env-file .env \
+  -v postgres_data:/var/lib/postgresql/data \
+  postgres:14-alpine
+```
+
+Start the Django container:
+
+```bash
+docker run -d \
+  --name django_web \
+  --network django_net \
+  --restart on-failure \
+  -p 8020:8020 \
+  --env-file .env \
+  truck-signs-api
+```
+
+The API is now available at:
+
+```
+http://<YOUR_IP>:8020/truck-signs/products/
+```
+
+The Admin Panel is available at:
+
+```
+http://<YOUR_IP>:8020/admin
+```
 
 
 ## Usage
