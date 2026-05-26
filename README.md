@@ -187,6 +187,7 @@ docker run -d \
   -p 8020:8020 \
   --env-file .env \
   truck_signs_api
+```
 
 
 
