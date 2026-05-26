@@ -41,7 +41,7 @@ cp example.env .env
 ```
 Build the Docker image:
 ```bash
-docker build -t truck-signs-api .
+docker build -t truck_signs_api .
 ```
 
 - Run the Containers
