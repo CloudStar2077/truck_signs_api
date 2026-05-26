@@ -73,7 +73,7 @@ docker run -d \
   --restart on-failure \
   -p 8020:8020 \
   --env-file .env \
-  truck-signs-api
+  truck_signs_api
 ```
 
 The API is now available at:
@@ -90,22 +90,6 @@ http://<YOUR_IP>:8020/admin
 
 
 ## Usage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 __Signs for Trucks__ is an online store to buy pre-designed vinyls with custom lines of letters (often call truck letterings). The store also allows clients to upload their own designs and to customize them on the website as well. Aside from the vinyls that are the main product of the store, clients can also purchase simple lettering vinyls with no truck logo, a fire extinguisher vinyl, and/or a vinyl with only the truck unit number (or another number selected by the client).
 
@@ -125,65 +109,86 @@ Most of the models do what can be inferred from their name. The following dots a
 
 To manage the payments, the payment gateway in use is [Stripe](https://stripe.com/).
 
+> [!NOTE]  
+> Because this repo is for documentation and testing purpose the payments part is missing.
+
 ### Brief Explanation of the Views
 
 Most of the views are CBV imported from _rest_framework.generics_, and they allow the backend api to do the basic CRUD operations expected, and so they inherit from the _ListAPIView_, _CreateAPIView_, _RetrieveAPIView_, ..., and so on.
 
 The behavior of some of the views had to be modified to address functionalities such as creation of order and payment, as in this case, for example, both functionalities are implemented in the same view, and so a _GenericAPIView_ was the view from which it inherits. Another example of this is the _UploadCustomerImage_ View that takes the vinyl template uploaded by the clients and creates a new product based on it.
 
-## Installation
+### Installation
 
-1. Clone the repo:
-    ```bash
-    git clone <INSERT URL>
-    ```
-1. Configure a virtual env and set up the database. See [Link for configuring Virtual Environment](https://docs.python-guide.org/dev/virtualenvs/) and [Link for Database setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04).
-1. Configure the environment variables.
-    1. Copy the content of the example env file that is inside the truck_signs_designs folder into a .env file:
-        ```bash
-        cd truck_signs_designs/settings
-        cp simple_env_config.env .env
-        ```
-    1. The new .env file should contain all the environment variables necessary to run all the django app in all the environments. However, the only needed variables for the development environment to run are the following:
-        ```bash
-        SECRET_KEY
-        DB_NAME
-        DB_USER
-        DB_PASSWORD
-        DB_HOST
-        DB_PORT
-        STRIPE_PUBLISHABLE_KEY
-        STRIPE_SECRET_KEY
-        EMAIL_HOST_USER
-        EMAIL_HOST_PASSWORD
-        ```
-    1. For the database, the default configurations should be:
-        ```bash
-        DB_NAME=trucksigns_db
-        DB_USER=trucksigns_user
-        DB_PASSWORD=supertrucksignsuser!
-        DB_HOST=localhost
-        DB_PORT=5432
-        ```
-    1. The SECRET_KEY is the django secret key. To generate a new one see: [Stackoverflow Link](https://stackoverflow.com/questions/41298963/is-there-a-function-for-generating-settings-secret-key-in-django)
+Clone the repo:
+  ```bash
+    git clone git@github.com:CloudStar2077/truck_signs_api.git
+  ```
 
-    1. **NOTE: not required for exercise**<br/>The STRIPE_PUBLISHABLE_KEY and the STRIPE_SECRET_KEY can be obtained from a developer account in [Stripe](https://stripe.com/). 
-        - To retrieve the keys from a Stripe developer account follow the next instructions:
-            1. Log in into your Stripe developer account (stripe.com) or create a new one (stripe.com > Sign Up). This should redirect to the account's Dashboard.
-            1. Go to Developer > API Keys, and copy both the Publishable Key and the Secret Key.
+Configure the environment variables.
+Copy the content of the `example.env` file into a `.env` file:
+```bash
+cd truck_signs_api
+cp example.env .env
+```
+Then fill in your values:
 
-    1. The EMAIL_HOST_USER and the EMAIL_HOST_PASSWORD are the credentials to send emails from the website when a client makes a purchase. This is currently disable, but the code to activate this can be found in views.py in the create order view as comments. Therefore, any valid email and password will work.
+| Variable | Example Value | Description |
+|---|---|---|
+| `DOCKER_SECRET_KEY` | `g9!Qv4...` | Django secret key for cryptographic signing |
+| `DOCKER_DB_NAME` | `djangodb` | Name of the PostgreSQL database |
+| `DOCKER_DB_USER` | `djangouser` | PostgreSQL user |
+| `DOCKER_DB_PASSWORD` | `Your_Secure_Password!` | PostgreSQL password |
+| `DOCKER_DB_HOST` | `db` | Hostname of the DB container |
+| `DOCKER_DB_PORT` | `5432` | PostgreSQL port |
+| `POSTGRES_DB` | `djangodb` | Required by the PostgreSQL image (must match `DOCKER_DB_NAME`) |
+| `POSTGRES_USER` | `djangouser` | Required by the PostgreSQL image (must match `DOCKER_DB_USER`) |
+| `POSTGRES_PASSWORD` | `Your_Secure_Password!` | Required by the PostgreSQL image (must match `DOCKER_DB_PASSWORD`) |
+| `DOCKER_EMAIL_HOST_USER` | `you@gmail.com` | Gmail address for sending emails |
+| `DOCKER_EMAIL_HOST_PASSWORD` | `your-app-password` | Gmail app password |
+| `DJANGO_SUPERUSER_USERNAME` | `admin` | Username for the auto-created superuser |
+| `DJANGO_SUPERUSER_EMAIL` | `admin@example.com` | Email for the auto-created superuser |
+| `DJANGO_SUPERUSER_PASSWORD` | `Your_Secure_Password!` | Password for the auto-created superuser |
 
-1. Run the migrations and then the app:
-    ```bash
-    python manage.py migrate
-    python manage.py runserver
-    ```
-1. Congratulations =) !!! The App should be running in [localhost:8000](http://localhost:8000)
-1. (Optional step) To create a super user run:
-    ```bash
-    python manage.py createsuperuser
-    ```
+> [!IMPORTANT]  
+> Never commit your `.env` file to version control. Make sure `.env` is listed in `.gitignore`.
+
+Build the Image
+
+The `Dockerfile` uses `python:3.8-slim` as the base image and installs all dependencies from `requirements.txt`. Build the image from the project root (where the `Dockerfile` is stored):
+
+```bash
+docker build -t truck_signs_api .
+```
+
+Create network and volume
+```bash
+docker network create django_net
+docker volume create postgres_data
+```
+
+Start PostgreSQL
+```bash
+docker run -d \
+  --name db \
+  --network django_net \
+  --restart on-failure \
+  --env-file .env \
+  -v postgres_data:/var/lib/postgresql/data \
+  postgres:14-alpine
+```
+
+Start Django
+```bash
+docker run -d \
+  --name django_web \
+  --network django_net \
+  --restart on-failure \
+  -p 8020:8020 \
+  --env-file .env \
+  truck_signs_api
+
+
 
 
 __NOTE:__ To create Truck vinyls with Truck logos in them, first create the __Category__ Truck Sign, and then the __Product__ (can have any name). This is to make sure the frontend retrieves the Truck vinyls for display in the Product Grid as it only fetches the products of the category Truck Sign.
@@ -243,4 +248,6 @@ __NOTE:__ To create Truck vinyls with Truck logos in them, first create the __Ca
 - Create Virual Environment with Virtualenv and Virtualenvwrapper: [Link](https://docs.python-guide.org/dev/virtualenvs/)
 - [Configure CORS](https://www.stackhawk.com/blog/django-cors-guide/)
 - [Setup Django with Cloudinary](https://cloudinary.com/documentation/django_integration)
+
+
 
