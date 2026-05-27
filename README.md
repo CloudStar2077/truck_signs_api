@@ -68,13 +68,14 @@ cd truck_signs_api
 
 How to build the Image 
 
-Copy the example environment file and fill in your values:
-```bash
-cp example.env .env   
-```
 Build the Docker image:
 ```bash
 docker build -t truck_signs_api .
+```
+
+Copy the example environment file and fill in your values:
+```bash
+cp example.env .env   
 ```
 
 Run the Containers
@@ -139,10 +140,6 @@ http://<YOUR_IP>:8020/admin
 
 
 ## Usage
-
-
-
-### Installation
 
 All configuration is done via a `.env` file. The `Dockerfile` uses python:3.8-slim as the base image and installs all dependencies from `requirements.txt`. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
 
