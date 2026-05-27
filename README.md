@@ -48,9 +48,9 @@ docker build -t truck_signs_api .
 
 Create the shared network and the volumes:
 ```bash
-docker network create django_net
-docker volume create postgres_data
-docker volume create django_static
+docker network create django_net &&
+docker volume create postgres_data &&
+docker volume create django_static &&
 docker volume create django_media
 ```
 
@@ -76,7 +76,7 @@ docker run -d \
   --env-file .env \
   -v django_static:/app/static \
   -v django_media:/app/media \
-  truck-signs-api
+  truck_signs_api
 ```
 Start the Nginx container:
 
@@ -185,10 +185,10 @@ docker build -t truck_signs_api .
 
 Create network and volumes
 ```bash
-docker network create django_net
-docker volume create postgres_data
-docker volume create django_static
-docker volume create django_media
+docker network create django_net &&
+docker volume create postgres_data &&
+docker volume create django_static &&
+docker volume create django_media &&
 ```
 
 Start PostgreSQL:
@@ -211,7 +211,7 @@ docker run -d \
   --env-file .env \
   -v django_static:/app/static \
   -v django_media:/app/media \
-  truck-signs-api
+  truck_signs_api
 ```
 Start Nginx:
 ```bash
