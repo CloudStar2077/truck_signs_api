@@ -27,7 +27,7 @@ __Signs for Trucks__ is an online store to buy pre-designed vinyls with custom l
 
 ### Settings
 
-The __settings__ folder inside the trucks_signs_designs folder contains the different setting's configuration for each environment (so far the environments are development, docker testing, and production). Those files are extensions of the base.py file which contains the basic configuration shared among the different environments (for example, the value of the template directory location). In addition, the .env file inside this folder has the environment variables that are mostly sensitive information and should always be configured before use. By default, the environment in use is the decker testing. To change between environments modify the \_\_init.py\_\_ file.
+The __settings__ folder inside the trucks_signs_designs folder contains the different setting's configuration for each environment (so far the environments are development, docker testing, and production). Those files are extensions of the base.py file which contains the basic configuration shared among the different environments (for example, the value of the template directory location). By default, the environment in use is the docker testing. To change between environments modify the \_\_init.py\_\_ file.
 
 ### Models
 
@@ -140,7 +140,7 @@ http://<YOUR_IP>:8020/admin
 
 ## Usage
 
-All configuration is done via a `.env` file. The `Dockerfile` uses python:3.8-slim as the base image and installs all dependencies from `requirements.txt`. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts. The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
+All configuration is done via a `.env` file. The environment variables are mostly sensitive information and should always be configured before use. The `Dockerfile` uses python:3.8-slim as the base image and installs all dependencies from `requirements.txt`. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts. The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
 
 Clone the repo:
   ```bash
