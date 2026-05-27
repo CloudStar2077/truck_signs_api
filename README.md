@@ -230,6 +230,18 @@ docker logs -f nginx
 docker logs -f db
 ```
 
+The API is now available at:
+
+```
+http://<YOUR_IP>:8020/truck-signs/products/
+```
+
+The Admin Panel is available at:
+
+```
+http://<YOUR_IP>:8020/admin
+```
+
 
 __NOTE:__ To create Truck vinyls with Truck logos in them, first create the __Category__ Truck Sign, and then the __Product__ (can have any name). This is to make sure the frontend retrieves the Truck vinyls for display in the Product Grid as it only fetches the products of the category Truck Sign.
 
