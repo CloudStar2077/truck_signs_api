@@ -13,10 +13,11 @@
 # Truck Signs API 
 
 This project provides a Dockerized Django REST API for managing truck sign products, categories, and orders with PostgreSQL as the database backend.
-Gunicorn and Nginx are used to run the application in production. Nginx handles reverse proxying and static content delivery, while Gunicorn serves the Python web application as a WSGI application server.
+Gunicorn and Nginx are used to ruDescription
+n the application in production. Nginx handles reverse proxying and static content delivery, while Gunicorn serves the Python web application as a WSGI application server.
 The setup is managed entirely through manual Docker commands without Docker Compose.
 
-# Table of Contents
+## Table of Contents
 * [Description](#Description)
 * [Quickstart](#Quickstart)
 * [Usage](#Usage)
