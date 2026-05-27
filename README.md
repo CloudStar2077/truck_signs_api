@@ -136,7 +136,7 @@ The behavior of some of the views had to be modified to address functionalities 
 
 ### Installation
 
-All configuration is done via a `.env` file. The `Dockerfile` describes the predefined docker image for the Django Backend. A `requirements.txt` is a file in Python projects that lists all required packages. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
+All configuration is done via a `.env` file. The `Dockerfile` uses python:3.8-slim as the base image and installs all dependencies from `requirements.txt`. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
 
 Clone the repo:
   ```bash
@@ -175,9 +175,7 @@ python -c "import secrets; print(secrets.token_urlsafe(50))"
 > [!IMPORTANT]  
 > Never commit your `.env` file to version control. Make sure `.env` is listed in `.gitignore`.
 
-Build the Image
-
-The `Dockerfile` uses `python:3.8-slim` as the base image and installs all dependencies from `requirements.txt`. Build the image from the project root (where the `Dockerfile` is stored):
+Build the image from the project root (where the `Dockerfile` is stored):
 
 ```bash
 docker build -t truck_signs_api .
