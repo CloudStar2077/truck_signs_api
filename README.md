@@ -17,23 +17,55 @@ Gunicorn and Nginx are used to run the application in production. Nginx handles 
 The setup is managed entirely through manual Docker commands without Docker Compose.
 
 # Table of Contents
-* [Prerequisites](#Prerequisites)
+* [Description](#Description)
 * [Quickstart](#Quickstart)
 * [Usage](#Usage)
 
-## Prerequisites
-- Docker (version 20.10 or higher) installed
-- Git installed
+## Description
+
+__Signs for Trucks__ is an online store to buy pre-designed vinyls with custom lines of letters (often call truck letterings). The store also allows clients to upload their own designs and to customize them on the website as well. Aside from the vinyls that are the main product of the store, clients can also purchase simple lettering vinyls with no truck logo, a fire extinguisher vinyl, and/or a vinyl with only the truck unit number (or another number selected by the client).
+
+### Settings
+
+The __settings__ folder inside the trucks_signs_designs folder contains the different setting's configuration for each environment (so far the environments are development, docker testing, and production). Those files are extensions of the base.py file which contains the basic configuration shared among the different environments (for example, the value of the template directory location). In addition, the .env file inside this folder has the environment variables that are mostly sensitive information and should always be configured before use. By default, the environment in use is the decker testing. To change between environments modify the \_\_init.py\_\_ file.
+
+### Models
+
+Most of the models do what can be inferred from their name. The following dots are notes about some of the models to make clearer their propose:
+- __Category Model:__ The category of the vinyls in the store. It contains the title of the category as well as the basic properties shared among products that belong to a same category. For example, _Truck Logo_ is a category for all vinyls that has a logo of a truck plus some lines of letterings (note that the vinyls are instances of the model _Product_). Another category is _Fire Extinguisher_, that is for all vinyls that has a logo of a fire extinguisher. 
+- __Lettering Item Category:__ This is the category of the lettering, for example: _Company Name_, _VIM NUMBER_, ... Each has a different pricing.
+- __Lettering Item Variations:__ This contains a foreign key to the __Lettering Item Category__ and the text added by the client.
+- __Product Variation:__ This model has the original product as a foreign key, plus the lettering lines (instances of the __Lettering Item Variations__ model) added by the client.
+- __Order:__ Contains the cart (in this case the cart is just a vinyl as only one product can be purchased each time). It also contains the contact and shipping information of the client.
+- __Payment:__ It has the payment information such as the time of the purchase and the client id in Stripe.
+
+To manage the payments, the payment gateway in use is [Stripe](https://stripe.com/).
+
+> [!NOTE]  
+> Because this repo is for documentation and testing purpose the payments part is missing.
+
+### Brief Explanation of the Views
+
+Most of the views are CBV imported from _rest_framework.generics_, and they allow the backend api to do the basic CRUD operations expected, and so they inherit from the _ListAPIView_, _CreateAPIView_, _RetrieveAPIView_, ..., and so on.
+
+The behavior of some of the views had to be modified to address functionalities such as creation of order and payment, as in this case, for example, both functionalities are implemented in the same view, and so a _GenericAPIView_ was the view from which it inherits. Another example of this is the _UploadCustomerImage_ View that takes the vinyl template uploaded by the clients and creates a new product based on it.
+
 
 ## Quickstart
 
-- Clone Repository 
+Prerequisites
+- Docker (version 20.10 or higher) installed
+- Git installed
+
+
+
+Clone Repository 
 ```bash
 git clone git@github.com:CloudStar2077/truck_signs_api.git &&
 cd truck_signs_api
 ```
 
-- How-to-build-the-Image 
+How to build the Image 
 
 Copy the example environment file and fill in your values:
 ```bash
@@ -44,7 +76,7 @@ Build the Docker image:
 docker build -t truck_signs_api .
 ```
 
-- Run the Containers
+Run the Containers
 
 Create the shared network and the volumes:
 ```bash
@@ -107,32 +139,7 @@ http://<YOUR_IP>:8020/admin
 
 ## Usage
 
-__Signs for Trucks__ is an online store to buy pre-designed vinyls with custom lines of letters (often call truck letterings). The store also allows clients to upload their own designs and to customize them on the website as well. Aside from the vinyls that are the main product of the store, clients can also purchase simple lettering vinyls with no truck logo, a fire extinguisher vinyl, and/or a vinyl with only the truck unit number (or another number selected by the client).
 
-### Settings
-
-The __settings__ folder inside the trucks_signs_designs folder contains the different setting's configuration for each environment (so far the environments are development, docker testing, and production). Those files are extensions of the base.py file which contains the basic configuration shared among the different environments (for example, the value of the template directory location). In addition, the .env file inside this folder has the environment variables that are mostly sensitive information and should always be configured before use. By default, the environment in use is the decker testing. To change between environments modify the \_\_init.py\_\_ file.
-
-### Models
-
-Most of the models do what can be inferred from their name. The following dots are notes about some of the models to make clearer their propose:
-- __Category Model:__ The category of the vinyls in the store. It contains the title of the category as well as the basic properties shared among products that belong to a same category. For example, _Truck Logo_ is a category for all vinyls that has a logo of a truck plus some lines of letterings (note that the vinyls are instances of the model _Product_). Another category is _Fire Extinguisher_, that is for all vinyls that has a logo of a fire extinguisher. 
-- __Lettering Item Category:__ This is the category of the lettering, for example: _Company Name_, _VIM NUMBER_, ... Each has a different pricing.
-- __Lettering Item Variations:__ This contains a foreign key to the __Lettering Item Category__ and the text added by the client.
-- __Product Variation:__ This model has the original product as a foreign key, plus the lettering lines (instances of the __Lettering Item Variations__ model) added by the client.
-- __Order:__ Contains the cart (in this case the cart is just a vinyl as only one product can be purchased each time). It also contains the contact and shipping information of the client.
-- __Payment:__ It has the payment information such as the time of the purchase and the client id in Stripe.
-
-To manage the payments, the payment gateway in use is [Stripe](https://stripe.com/).
-
-> [!NOTE]  
-> Because this repo is for documentation and testing purpose the payments part is missing.
-
-### Brief Explanation of the Views
-
-Most of the views are CBV imported from _rest_framework.generics_, and they allow the backend api to do the basic CRUD operations expected, and so they inherit from the _ListAPIView_, _CreateAPIView_, _RetrieveAPIView_, ..., and so on.
-
-The behavior of some of the views had to be modified to address functionalities such as creation of order and payment, as in this case, for example, both functionalities are implemented in the same view, and so a _GenericAPIView_ was the view from which it inherits. Another example of this is the _UploadCustomerImage_ View that takes the vinyl template uploaded by the clients and creates a new product based on it.
 
 ### Installation
 
