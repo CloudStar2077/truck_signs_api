@@ -46,10 +46,12 @@ docker build -t truck_signs_api .
 
 - Run the Containers
 
-Create the shared network and the database volume:
+Create the shared network and the volumes:
 ```bash
 docker network create django_net
 docker volume create postgres_data
+docker volume create django_static
+docker volume create django_media
 ```
 
 Start the PostgreSQL container:
@@ -71,9 +73,23 @@ docker run -d \
   --name django_web \
   --network django_net \
   --restart on-failure \
-  -p 8020:8020 \
   --env-file .env \
-  truck_signs_api
+  -v django_static:/app/static \
+  -v django_media:/app/media \
+  truck-signs-api
+```
+Start the Nginx container:
+
+```bash
+docker run -d \
+  --name nginx \
+  --network django_net \
+  --restart on-failure \
+  -p 8020:8020 \
+  -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf \
+  -v django_static:/app/static \
+  -v django_media:/app/media \
+  nginx:alpine
 ```
 
 The API is now available at:
@@ -120,6 +136,8 @@ The behavior of some of the views had to be modified to address functionalities 
 
 ### Installation
 
+All configuration is done via a `.env` file. The `Dockerfile` describes the predefined docker image for the Django Backend. A `requirements.txt` is a file in Python projects that lists all required packages. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
+
 Clone the repo:
   ```bash
     git clone git@github.com:CloudStar2077/truck_signs_api.git
@@ -144,12 +162,16 @@ Then fill in your values:
 | `POSTGRES_DB` | `djangodb` | Required by the PostgreSQL image (must match `DOCKER_DB_NAME`) |
 | `POSTGRES_USER` | `djangouser` | Required by the PostgreSQL image (must match `DOCKER_DB_USER`) |
 | `POSTGRES_PASSWORD` | `Your_Secure_Password!` | Required by the PostgreSQL image (must match `DOCKER_DB_PASSWORD`) |
-| `DOCKER_EMAIL_HOST_USER` | `you@gmail.com` | Gmail address for sending emails |
-| `DOCKER_EMAIL_HOST_PASSWORD` | `your-app-password` | Gmail app password |
+| `DOCKER_EMAIL_HOST_USER` | `you@gmail.com` | E-mail address for sending emails |
+| `DOCKER_EMAIL_HOST_PASSWORD` | `your-app-password` | E-mail app password |
 | `DJANGO_SUPERUSER_USERNAME` | `admin` | Username for the auto-created superuser |
 | `DJANGO_SUPERUSER_EMAIL` | `admin@example.com` | Email for the auto-created superuser |
 | `DJANGO_SUPERUSER_PASSWORD` | `Your_Secure_Password!` | Password for the auto-created superuser |
 
+To generate a secure Django Secret Key use
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
 > [!IMPORTANT]  
 > Never commit your `.env` file to version control. Make sure `.env` is listed in `.gitignore`.
 
@@ -161,13 +183,15 @@ The `Dockerfile` uses `python:3.8-slim` as the base image and installs all depen
 docker build -t truck_signs_api .
 ```
 
-Create network and volume
+Create network and volumes
 ```bash
 docker network create django_net
 docker volume create postgres_data
+docker volume create django_static
+docker volume create django_media
 ```
 
-Start PostgreSQL
+Start PostgreSQL:
 ```bash
 docker run -d \
   --name db \
@@ -178,18 +202,35 @@ docker run -d \
   postgres:14-alpine
 ```
 
-Start Django
+Start Django:
 ```bash
 docker run -d \
   --name django_web \
   --network django_net \
   --restart on-failure \
-  -p 8020:8020 \
   --env-file .env \
-  truck_signs_api
+  -v django_static:/app/static \
+  -v django_media:/app/media \
+  truck-signs-api
 ```
-
-
+Start Nginx:
+```bash
+docker run -d \
+  --name nginx \
+  --network django_net \
+  --restart on-failure \
+  -p 8020:8020 \
+  -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf \
+  -v django_static:/app/static \
+  -v django_media:/app/media \
+  nginx:alpine
+```
+To verify everything is all right check the Logs
+```bash
+docker logs -f django_web
+docker logs -f nginx
+docker logs -f db
+```
 
 
 __NOTE:__ To create Truck vinyls with Truck logos in them, first create the __Category__ Truck Sign, and then the __Product__ (can have any name). This is to make sure the frontend retrieves the Truck vinyls for display in the Product Grid as it only fetches the products of the category Truck Sign.
