@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 <div align="center">
 
 ![Truck Signs](./screenshots/Truck_Signs_logo.png)
