@@ -65,7 +65,7 @@ git clone git@github.com:CloudStar2077/truck_signs_api.git &&
 cd truck_signs_api
 ```
 
-How to build the Image 
+- How to build the Image 
 
 Build the Docker image:
 ```bash
@@ -76,8 +76,6 @@ Copy the example environment file and fill in your values:
 ```bash
 cp example.env .env   
 ```
-
-Run the Containers
 
 Create the shared network and the volumes:
 ```bash
