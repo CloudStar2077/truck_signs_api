@@ -53,7 +53,6 @@ class Migration(migrations.Migration):
                 ('base_price', models.FloatField(default=0.0)),
                 ('max_amount_of_lettering_items', models.FloatField(default=-1)),
                 ('image', models.ImageField(upload_to='uploads/products/')),
-                ('only_on_default_color', models.BooleanField(default=True)),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.Category')),
             ],
         ),

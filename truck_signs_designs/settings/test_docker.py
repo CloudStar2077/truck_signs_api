@@ -1,20 +1,16 @@
 import environ
 from .base import *
 
-DEBUG = True
 
 env = environ.Env()
-# reading env file
 environ.Env.read_env()
 
 SECRET_KEY = env("DOCKER_SECRET_KEY")
-DEBUG = True
+DEBUG = False
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
-
-
 
 DATABASES = {
     'default': {
@@ -26,11 +22,6 @@ DATABASES = {
         'PORT': env('DOCKER_DB_PORT'),
     }
 }
-
-STRIPE_PUBLISHABLE_KEY=env("DOCKER_STRIPE_PUBLISHABLE_KEY")
-STRIPE_SECRET_KEY=env("DOCKER_STRIPE_SECRET_KEY")
-
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

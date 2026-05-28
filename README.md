@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <div align="center">
 
 ![Truck Signs](./screenshots/Truck_Signs_logo.png)
@@ -302,6 +303,3 @@ __NOTE:__ To create Truck vinyls with Truck logos in them, first create the __Ca
 - Create Virual Environment with Virtualenv and Virtualenvwrapper: [Link](https://docs.python-guide.org/dev/virtualenvs/)
 - [Configure CORS](https://www.stackhawk.com/blog/django-cors-guide/)
 - [Setup Django with Cloudinary](https://cloudinary.com/documentation/django_integration)
-
-
-
