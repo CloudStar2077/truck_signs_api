@@ -188,7 +188,7 @@ Create network and volumes
 docker network create django_net &&
 docker volume create postgres_data &&
 docker volume create django_static &&
-docker volume create django_media &&
+docker volume create django_media 
 ```
 
 Start PostgreSQL:
