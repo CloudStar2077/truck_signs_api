@@ -6,11 +6,9 @@ env = environ.Env()
 environ.Env.read_env()
 
 SECRET_KEY = env("DOCKER_SECRET_KEY")
-DEBUG = False
+DEBUG = env.bool("DOCKER_DEBUG", default=False)
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+ALLOWED_HOSTS = env.list("DOCKER_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 DATABASES = {
     'default': {
