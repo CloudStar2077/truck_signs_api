@@ -138,7 +138,7 @@ http://<YOUR_IP>:8020/admin
 
 ## Usage
 
-All configuration is done via a `.env` file. The environment variables are mostly sensitive information and should always be configured before use. The `Dockerfile` uses python:3.8-slim as the base image and installs all dependencies from `requirements.txt`. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.It fully prepares the Django application by waiting and testing untill the Database in available, running the migrations, collecting static files, creating a SuperUser and finnaly starts the WSGI Server. The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
+All configuration is done via a `.env` file. The environment variables are mostly sensitive information and should always be configured before use. The `Dockerfile` uses python:3.8-slim as the base image for the Django Backend and installs all dependencies from `requirements.txt`. The PostgreSQL Database is pulled as a prebuilt image from the DockerHub. The `nginx.conf` is located in the project root and is mounted into the Nginx container as a bind mount. The shell script `entrypoint.sh` is executed inside the container when the container starts.It fully prepares the Django application by waiting and testing untill the Database in available, running the migrations, collecting static files, creating a SuperUser and finnaly starts the WSGI Server. The `.gitignore` defines files and folders that should not be versioned by Git. This excludes temporary files, sensitive data or automatically generated content from the repository. The `.dockerignore` determines which files are not included in the build context when building a Docker image. This excludes unnecessary files and makes Docker builds faster and images smaller.
 
 Clone the repo:
   ```bash
@@ -227,9 +227,9 @@ docker run -d \
 ```
 To verify everything is all right check the Logs
 ```bash
-docker logs -f django_web
-docker logs -f nginx
-docker logs -f db
+docker logs django_web &&
+docker logs nginx &&
+docker logs db
 ```
 
 The API is now available at:
