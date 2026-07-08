@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.conf.urls import url,include
-# from .views import PricesPageAPI,HowToAPIView, CreateOrderAPI, OrderSummaryAPIView, RetrieveAllProductColorsAPI
+from django.conf.urls import url, include
 from .views import *
 
 app_name = 'trucks_signs_app'
@@ -16,7 +15,6 @@ urlpatterns = [
     url(r'^truck-logo-list/$', LogoListView.as_view(), name='truck-logo-list-api'),
     url(r'^order/(?P<id>[0-9]+)/create/$', CreateOrder.as_view(), name='create-order-api'),
     url(r'^order/(?P<id>[0-9]+)/retrieve/$', RetrieveOrder.as_view(), name='retrieve-order-api'),
-    url(r'^order-payment/(?P<id>[0-9]+)/$', PaymentView.as_view(), name='order-payment-api'),
     url(r'^comments/$', CommentsView.as_view(), name='comments-api'),
     url(r'^comment/create/$', CommentCreateView.as_view(), name='comment-create-api'),
     url(r'^upload-customer-image/$', UploadCustomerImage.as_view(), name='upload-customer-image-api'),

@@ -19,12 +19,6 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 
-import stripe
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-# admin_email = settings.EMAIL_ADMIN
-# current_admin_domain = settings.CURRENT_ADMIN_DOMAIN
-
 # Create your views here.
 
 class CategoryListView(ListAPIView):
@@ -55,20 +49,17 @@ class ProductFromCategoryListView(ListAPIView):
         category_id = self.kwargs.get(self.lookup_url_kwarg)
         return Product.objects.filter(category__id=category_id)
 
-
 class ProductColorListView(ListAPIView):
     authentication_classes = []
     serializer_class = ProductColorSerializer
     model = ProductColor
     queryset = ProductColor.objects.all()
 
-
 class LogoListView(ListAPIView):
     authentication_classes = []
     serializer_class = ProductSerializer
     model = Product
     queryset = Product.objects.filter(category__title='Truck Sign', is_uploaded=False)
-
 
 class ProductDetail(RetrieveAPIView):
     authentication_classes = []
@@ -77,18 +68,12 @@ class ProductDetail(RetrieveAPIView):
     lookup_field = 'id'
     queryset = Product.objects.all()
 
-
-
-
 class ProductVariationRetrieveView(RetrieveAPIView):
     authentication_classes = []
     serializer_class = ProductVariationSerializer
     model = ProductVariation
     lookup_field = 'id'
     queryset = ProductVariation.objects.all()
-
-
-
 
 class CreateOrder(GenericAPIView):
     authentication_classes = []
@@ -123,10 +108,7 @@ class CreateOrder(GenericAPIView):
         order = order_serializer.save(product=product_variation, payment=None)
         order_serializer = OrderSerializer(order)
 
-        return Response({"Result":order_serializer.data}, status=status.HTTP_200_OK)
-
-
-
+        return Response({"Result": order_serializer.data}, status=status.HTTP_200_OK)
 
 class RetrieveOrder(RetrieveAPIView):
     authentication_classes = []
@@ -135,125 +117,16 @@ class RetrieveOrder(RetrieveAPIView):
     lookup_field = 'id'
     queryset = Order.objects.all()
 
-
-
-
-class PaymentView(GenericAPIView):
-
-    authentication_classes = []
-    serializer_class = PaymentSerializer
-
-    def get(self, post, id, format=None):
-        order = Order.objects.get(id=id)
-        order_serializer = OrderSerializer(order)
-        return Response({"Order": order_serializer.data}, status=status.HTTP_200_OK)
-
-    def post(self, request, id, format=None):
-
-        try:
-        # if True:
-            order = Order.objects.get(id=id)
-            try:
-                order_serializer = OrderSerializer(order, data=request.data['order'], partial=True)
-                order_serializer.is_valid(raise_exception=True)
-                order = order_serializer.save()
-            except:
-                pass
-
-            card_num = request.data['card_num']
-            exp_month = request.data['exp_month']
-            exp_year = request.data['exp_year']
-            cvc = request.data['cvc']
-
-            token = stripe.Token.create(
-                card={
-                    "number": card_num,
-                    "exp_month": int(exp_month),
-                    "exp_year": int(exp_year),
-                    "cvc": cvc
-                },
-            )
-
-            amount = int(order.get_total_price() * 100)
-
-            charge = stripe.Charge.create(
-                amount=amount,
-                currency="usd",
-                source=token
-            )
-
-
-            stripe_charge_id = charge['id']
-            payment = Payment(user_email = order.user_email, stripe_charge_id=stripe_charge_id, amount=amount)
-            payment.save()
-            order.ordered = True
-            order.payment = payment
-            order.save()
-
-            # Send Email to user
-            # email_subject="Purchase made."
-            # message=render_to_string('purchase-made.html', {
-            #     'user': order.user_email,
-            #     'image': order.product.product.image,
-            #     'amount_of_product': str(order.product.amount),
-            #     'total_amount':str("{:.2f}".format(order.get_total_price())),
-            # })
-            # to_email = order.user_email
-            # email = EmailMultiAlternatives(email_subject, to=[to_email])
-            # email.attach_alternative(message, "text/html")
-            # email.send()
-            #
-            # admin_message=render_to_string('admin-purchase-made.html',{
-            #     'user': order.user_email,
-            #     'order': order.id,
-            #     'current_admin_domain':current_admin_domain,
-            # })
-
-            # to_admin_email = admin_email
-            # email = EmailMultiAlternatives(email_subject, to=[to_admin_email])
-            # email.attach_alternative(admin_message, "text/html")
-            # email.send()
-
-            return Response({"Result": "Success"}, status=status.HTTP_200_OK)
-
-        # else:
-        #     pass
-        except stripe.error.CardError as e:
-            return Response({"Result":"Error with card during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except stripe.error.RateLimitError as e:
-            return Response({"Result":"Rate Limit error during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except stripe.error.InvalidRequestError as e:
-            return Response({"Result":"Invalid request error during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except stripe.error.AuthenticationError as e:
-            return Response({"Result":"Authentication error during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except stripe.error.APIConnectionError as e:
-            return Response({"Result":"API connection error during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except stripe.error.StripeError as e:
-            return Response({"Result":"Something went wrong during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except:
-            return Response({"Result":"Error during payment"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 class CommentsView(ListAPIView):
     authentication_classes = []
     serializer_class = CommentSerializer
     model = Comment
     queryset = Comment.objects.all().filter(visible=True)
 
-
 class CommentCreateView(CreateAPIView):
     authentication_classes = []
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-
 
 class UploadCustomerImage(GenericAPIView):
     authentication_classes = []
